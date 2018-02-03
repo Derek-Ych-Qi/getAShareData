@@ -99,3 +99,10 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# datafiles
+.h5
+.hdf5
+.csv
+data/*
+data/hist_ticks.h5
