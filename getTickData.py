@@ -2,6 +2,7 @@ import tushare as ts
 import datetime
 from itertools import product
 import pdb, logging
+import argparse
 logging.basicConfig(level=logging.INFO)
 
 from dateUtils import dateRange
@@ -42,8 +43,16 @@ def get_tick_data_para_batch(allTickers, sdate, edate):
     pass
 
 if __name__ == '__main__':
-    allTickers = ['000002', '601988', '300059']
-    sdate = datetime.date(2017, 1, 1)
-    # sdate = datetime.date(2018, 1, 22)
-    edate = datetime.date(2018, 2, 1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--start', '-s', type=str)
+    args = parser.parse_args()
+
+    # allTickers = ts.get_hs300s()
+    allTickers = ts.get_sz50s()
+    allTickers = allTickers.code.tolist()
+    if args.start:
+        sdate = datetime.datetime.strptime(args.start, '%Y%m%d').date()
+    else:
+        sdate = datetime.date(2017, 1, 1)
+    edate = datetime.date.today()
     get_tick_data_serial_batch(allTickers, sdate, edate)

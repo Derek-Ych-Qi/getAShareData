@@ -106,3 +106,6 @@ ENV/
 .csv
 data/*
 data/hist_ticks.h5
+
+# log
+log/*
