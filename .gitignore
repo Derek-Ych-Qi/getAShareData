@@ -104,6 +104,7 @@ ENV/
 .h5
 .hdf5
 .csv
+.csv.gz
 data/*
 data/hist_ticks.h5
 
