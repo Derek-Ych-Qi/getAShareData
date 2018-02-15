@@ -6,7 +6,7 @@ from multiprocessing import Pool
 from itertools import product
 logging.basicConfig(level=logging.INFO)
 
-from dateUtils import dateRange
+from dateUtils import tradingDateRange
 
 _all_sources = ('nt', 'sn', 'tt')
 _datadir = './data/tmp'
@@ -30,12 +30,12 @@ def _get_tick_data(ticker, date):
     df['date'] = date
     df['ticker'] = ticker
     # df.to_hdf('./data/hist_ticks.h5', key='%s/%s' % (date, ticker), mode='a')
-    df.to_csv(_datadir + '/%s_%s.csv.gz' % (date, ticker), compression='gzip', index=False)
+    df.to_csv(_datadir + '/ticks_%s_%s.csv.gz' % (date, ticker), compression='gzip', index=False)
     logging.info('%d' % df.shape[0])
 
 def get_tick_data_serial_batch(allTickers, sdate=None, edate=datetime.date.today()):
     if not sdate: sdate = edate
-    allDates = dateRange(sdate, edate)
+    allDates = tradingDateRange(sdate, edate)
     for ticker, date in product(allTickers, allDates):
         try:
             _get_tick_data(ticker, date)
@@ -45,7 +45,7 @@ def get_tick_data_serial_batch(allTickers, sdate=None, edate=datetime.date.today
 
 def get_tick_data_para_batch(allTickers, sdate=None, edate=datetime.date.today()):
     if not sdate: sdate = edate
-    allDates = dateRange(sdate, edate)
+    allDates = tradingDateRange(sdate, edate)
     pool = Pool()
     for ticker, date in product(allTickers, allDates):
         pool.apply_async(_get_tick_data, (ticker, date))
@@ -55,6 +55,7 @@ def get_tick_data_para_batch(allTickers, sdate=None, edate=datetime.date.today()
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--start', '-s', type=str, default=None)
+    parser.add_argument('--end',   '-e', type=str, default=None)
     parser.add_argument('--mode', '-m', type=str, default='S')
     args = parser.parse_args()
 
@@ -62,11 +63,10 @@ if __name__ == '__main__':
     allTickers = ts.get_sz50s()
     allTickers = allTickers.code.tolist()
     # Decide starting date
-    if args.start:
-        sdate = datetime.datetime.strptime(args.start, '%Y%m%d').date()
-    else:
-        sdate = None
-    edate = datetime.date.today()
+    if args.start: sdate = datetime.datetime.strptime(args.start, '%Y%m%d').date()
+    else: sdate = None
+    if args.end: edate = datetime.datetime.strptime(args.end, '%Y%m%d').date()
+    else: edate = datetime.date.today()
     logging.info('Getting tick data from date %s to date %s' % (sdate, edate))
     # Decide mode
     if args.mode.upper() == 'P':
