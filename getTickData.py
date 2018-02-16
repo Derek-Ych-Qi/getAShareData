@@ -59,8 +59,8 @@ if __name__ == '__main__':
     parser.add_argument('--mode', '-m', type=str, default='S')
     args = parser.parse_args()
 
-    # allTickers = ts.get_hs300s()
-    allTickers = ts.get_sz50s()
+    allTickers = ts.get_hs300s()
+    # allTickers = ts.get_sz50s()
     allTickers = allTickers.code.tolist()
     # Decide starting date
     if args.start: sdate = datetime.datetime.strptime(args.start, '%Y%m%d').date()

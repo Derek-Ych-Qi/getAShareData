@@ -2,7 +2,7 @@ import tushare as ts
 import datetime
 
 oneDay = datetime.timedelta(days=1)
-tradeCal = ts.util.dateu.trade_cal().set_index('calendarDate', inplae=True)
+tradeCal = ts.util.dateu.trade_cal().set_index('calendarDate')
 
 def dateRange(sdate, edate, step=oneDay, inclusive=True, weekdays=True, *args, **kwargs):
     curDate = sdate
