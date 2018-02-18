@@ -2,11 +2,11 @@ import tushare as ts
 import datetime
 import numpy as np
 import pandas as pd
-import pdb, logging
+import pdb, logging, sys
 import time
-import argparse
-from multiprocessing import Pool
 from itertools import cycle
+
+from dateUtils import isTrading
 
 _mstart = datetime.time(9,10,0)
 _mend   = datetime.time(11,40,0)
@@ -42,13 +42,14 @@ class QuoteGetter(object):
         self.fileHandle.close()
 
 if __name__ == "__main__":
-    allTickers = ts.get_sz50s()
-    allTickers = allTickers.code.tolist()
-    qg = QuoteGetter(tickers=allTickers)
-    # while(_checkTime(datetime.datetime.now())):
-    qg.saveHeader()
+    if not isTrading(today):
+        logging.warning('date %s is not an active trading day' % today.__str__())
+        sys.exit(0)
 
-    for i in range(10):
+    allTickers = ts.get_sz50s().code.tolist()
+    qg = QuoteGetter(tickers=allTickers)
+    qg.saveHeader()
+    while(_checkTime(datetime.datetime.now())):
         try:
             qg.getQuoteSnapshot()
         except Exception as e:

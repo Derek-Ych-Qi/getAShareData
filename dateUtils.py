@@ -4,6 +4,9 @@ import datetime
 oneDay = datetime.timedelta(days=1)
 tradeCal = ts.util.dateu.trade_cal().set_index('calendarDate')
 
+def isTrading(curDate = datetime.date.today()):
+    return tradeCal.loc[str(curDate), 'isOpen'] == 1
+
 def dateRange(sdate, edate, step=oneDay, inclusive=True, weekdays=True, *args, **kwargs):
     curDate = sdate
     if inclusive: edate += step
